@@ -2,6 +2,7 @@ const express = require("express")
 const server = express()
 
 const session = require("express-session")
+const KnexSessionStore = require("connect-session-knex")(session)
 const dbConnection = require("../data/dbConfig")
 const configMiddleware = require("../middleware/configMiddleware.js")
 
@@ -27,12 +28,14 @@ server.use(session({
     
 }))
 
+configMiddleware(server)
+
 server.get("/", (req,res)=> {
     res.send(`Server is running`)
 })
 
 server.use("/api", apiRouter)
 
-configMiddleware(server)
+
 
 module.exports = server

@@ -1,13 +1,13 @@
 const express = require("express")
 const db = require("../model")
-const { restricted }= require("../../middleware/usersMiddleware.js")
+const { validateSession, validateToken }= require("../../middleware/usersMiddleware.js")
 
 const router = express.Router()
 
 
 
 
-router.get('/', restricted, async (req, res) => {
+router.get('/', validateSession, async (req, res) => {
     try{
         res.status(200).json(await db.getAllUsers())
     }
