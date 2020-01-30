@@ -6,7 +6,7 @@ const router = express.Router()
 const usersDB = require("../model.js")
 const { jwtSecret } = require("../../data/config/secrets")
 
-const { validateUserInput, validateLoginReq } = require("../../middleware/usersMiddleware")
+const { validateUserInput, validateLoginReq, restricted } = require("../../middleware/usersMiddleware")
 
 
 router.post("/register", validateUserInput, async (req, res) => {
@@ -46,13 +46,9 @@ router.post("/login", validateLoginReq, async (req, res) => {
 })
 
 
-router.get("/protected", async(req,res,next)=> {
-    
-    try {
+router.get("/protected", restricted, async(req,res,next)=> {
 
-        if (!req.headers.authorization || !req.session) {
-            return res.status(403).json({ message: `YOU SHALL NOT PASS` })
-        }
+    try {
         res.status(200).json({ message: "YOU MAY PROCEED"})
     }
     catch(err){

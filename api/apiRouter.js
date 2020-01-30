@@ -2,7 +2,7 @@ const express = require("express")
 const router = express.Router()
 
 const authRouter = require("../routes/auth/router")
-const usersRouter = require("../routes/auth/router")
+const usersRouter = require("../routes/users/router")
 
 router.use('/auth', authRouter)
 router.use('/users', usersRouter)

@@ -1,32 +1,26 @@
 
 const bcrypt = require("bcryptjs")
+const jwt = require("jsonwebtoken")
+const { jwtSecret }  = require("../data/config/secrets")
 const Users = require("../routes/model.js")
 
 
-function validateSession(req, res, next) {
-    if (req.session && req.session.loggedIn) {
-        next();
-    } else {
-        res.json({ you: "shall not pass!" });
-    }
-}
-
-function validateToken(req,res,next) {
+function restricted(req, res, next) {
     const token = req.headers.authorization;
-
-  if(token) {
-    jwt.verify(token, jwtSecret, (err, decodedToken) => {
-      if(err) {
-        res.status(401).json({ you: "can't touch this!"})
-      } else {
-        req.user = { department: decodedToken.department };
-        next();
-      }
-    })
-  } else {
-    res.status(401).json({ you: 'shall not pass!'})
-  }
+    if (req.session && req.session.loggedIn && token) {
+        jwt.verify(token, jwtSecret, (err, decodedToken) => {
+            if(err) {
+              res.status(401).json({ you: "can't touch this!"})
+            } else {
+              req.user = { department: decodedToken.department };
+              next();
+            }
+          })
+        } else {
+          res.status(401).json({ you: 'shall not pass!'})
+        }
 }
+
 
 function validateLoginReq(req, res, next){
     if (!req.body){
@@ -58,8 +52,7 @@ function validateUserInput(req, res, next){
 
 
 module.exports = {
-    validateSession,
+    restricted,
     validateUserInput,
     validateLoginReq,
-    validateToken
 }
